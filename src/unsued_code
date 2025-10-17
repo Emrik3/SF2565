@@ -1,0 +1,66 @@
+
+# put here since it's a bit unneccessarily compelex
+class XRayDataset(Dataset):
+
+    def __init__(self, label_path, mode="train"):
+        self._label_header = None
+        self._image_paths = []
+        self._labels = []
+        self._mode = mode
+        self.dict = [
+            {"1.0": "1", "": "0", "0.0": "0", "-1.0": "0"},
+            {"1.0": "1", "": "0", "0.0": "0", "-1.0": "0"},
+        ]
+        self._transform = transforms.Compose(
+            [
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
+        self._transform = ResNet50_Weights.DEFAULT.transforms()
+        with open(label_path) as f:
+            header = f.readline().strip("\n").split(",")
+            self._label_header = [
+                header[7],
+                header[10],
+                header[11],
+                header[13],
+                header[15],
+            ]
+            for idx, line in enumerate(f):
+                if idx >= 1000:
+                    break
+                labels = []
+                fields = line.strip("\n").split(",")
+                if fields[3].lower() != "frontal" and fields[4].lower() != "AP":
+                    continue
+                image_path = "data/" + fields[0]
+                for index, value in enumerate(fields[5:]):
+                    if index == 5 or index == 8:
+                        labels.append(self.dict[1].get(value))
+                    elif index == 2 or index == 6 or index == 10:
+                        labels.append(self.dict[0].get(value))
+                # labels = ([self.dict.get(n, n) for n in fields[5:]])
+                labels = list(map(int, labels))
+                self._image_paths.append(image_path)
+                assert os.path.exists(image_path), image_path
+                self._labels.append(labels)
+
+        self._num_image = len(self._image_paths)
+
+    def __len__(self):
+        return self._num_image
+
+    def __getitem__(self, idx):
+        path = self._image_paths[idx]
+        image = Image.open(path).convert("RGB")
+        labels = self._labels[idx]
+
+        image_tensor = self._transform(image)
+
+        labels = torch.tensor(self._labels[idx], dtype=torch.float)  # <- tensor here
+        return (image_tensor, labels)

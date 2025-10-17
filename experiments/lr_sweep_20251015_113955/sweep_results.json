@@ -1,0 +1,51 @@
+[
+    {
+        "experiment_id": 1,
+        "experiment_name": "lr_sweep_000_learning_rate0.01",
+        "config": {
+            "data_path": "data/xray_features_frontal_only.pt",
+            "output_dir": "experiments/lr_sweep_20251015_113955",
+            "experiment_name": "lr_sweep_000_learning_rate0.01",
+            "input_dim": 2048,
+            "hidden_dims": [
+                512,
+                256
+            ],
+            "num_classes": 1,
+            "dropout_rate": 0.5,
+            "activation": "relu",
+            "batch_norm": true,
+            "batch_size": 64,
+            "num_epochs": 30,
+            "learning_rate": 0.01,
+            "weight_decay": 0.0001,
+            "optimizer": "adam",
+            "momentum": 0.9,
+            "use_scheduler": true,
+            "scheduler_type": "step",
+            "scheduler_step_size": 10,
+            "scheduler_gamma": 0.5,
+            "scheduler_patience": 5,
+            "train_split": 0.8,
+            "val_split": 0.2,
+            "random_seed": 42,
+            "pos_weight": null,
+            "use_weighted_sampler": true,
+            "use_early_stopping": true,
+            "early_stopping_patience": 10,
+            "save_best_only": true,
+            "device": "cpu",
+            "num_workers": 4,
+            "print_every": 10,
+            "save_plots": true,
+            "verbose": false
+        },
+        "best_val_accuracy": 0.8616983734881781,
+        "best_val_f1_score": 0.5960078718020804,
+        "best_val_auc": 0.8802417452534055,
+        "best_val_loss": 0.33468446034754884,
+        "best_epoch": 17,
+        "total_epochs": 27,
+        "final_val_accuracy": 0.8206024830772192
+    }
+]
